@@ -1,0 +1,70 @@
+[
+  {
+    "name": "love",
+    "postsCount": 2150000000,
+    "url": "https://www.instagram.com/explore/tags/love/",
+    "posts": "2.15 G",
+    "postsPerDay": 1178082.19,
+    "related": [
+      { "hash": "#instagood", "info": 1960000000 },
+      { "hash": "#instagram", "info": 1580000000 },
+      { "hash": "#fashion", "info": 1220000000 }
+    ],
+    "frequent": [
+      { "hash": "#instagood", "info": 1960000000 },
+      { "hash": "#instagram", "info": 1580000000 }
+    ],
+    "average": [
+      { "hash": "#fashion", "info": 1220000000 }
+    ],
+    "rare": [],
+    "relatedFrequent": [
+      { "hash": "#instagood", "info": 1960000000 },
+      { "hash": "#instagram", "info": 1580000000 }
+    ],
+    "relatedAverage": [
+      { "hash": "#fashion", "info": 1220000000 }
+    ],
+    "relatedRare": [],
+    "topPosts": [
+      {
+        "id": "3663300161530678929",
+        "type": "Video",
+        "shortCode": "DLWqBaBqs6R",
+        "caption": "Saree♥️...",
+        "hashtags": ["explore", "explorepage", "foryou", "foryoupage", "saree"],
+        "mentions": ["aurawardrobe2025"],
+        "url": "https://www.instagram.com/p/DLWqBaBqs6R/"
+      }
+    ]
+  },
+  {
+    "name": "travel",
+    "postsCount": 735000000,
+    "url": "https://www.instagram.com/explore/tags/travel/",
+    "posts": "735.00 M",
+    "postsPerDay": 402739.73,
+    "related": [
+      { "hash": "#wanderlust", "info": 210000000 },
+      { "hash": "#travelgram", "info": 180000000 },
+      { "hash": "#vacation", "info": 95000000 }
+    ],
+    "frequent": [
+      { "hash": "#wanderlust", "info": 210000000 },
+      { "hash": "#travelgram", "info": 180000000 }
+    ],
+    "average": [
+      { "hash": "#vacation", "info": 95000000 }
+    ],
+    "rare": [],
+    "relatedFrequent": [
+      { "hash": "#wanderlust", "info": 210000000 },
+      { "hash": "#travelgram", "info": 180000000 }
+    ],
+    "relatedAverage": [
+      { "hash": "#vacation", "info": 95000000 }
+    ],
+    "relatedRare": [],
+    "topPosts": []
+  }
+]
