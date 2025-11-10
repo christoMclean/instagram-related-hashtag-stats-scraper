@@ -1,0 +1,17 @@
+unit_idx += 1
+    if unit_idx == 0:
+        return str(int(n))
+    return f"{n:.2f} {units[unit_idx]}"
+
+def chunked(iterable: Iterable[Any], size: int) -> Iterable[List[Any]]:
+    """
+    Yield lists of up to `size` items from the input iterable.
+    """
+    chunk: List[Any] = []
+    for item in iterable:
+        chunk.append(item)
+        if len(chunk) >= size:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk
