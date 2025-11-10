@@ -1,0 +1,96 @@
+project_root = CURRENT_DIR.parent
+    candidate = project_root / "data" / "inputs.sample.txt"
+    if candidate.exists():
+        return candidate
+    return None
+
+def prepare_hashtags(args: argparse.Namespace) -> List[str]:
+    if args.tags:
+        logger.info("Using hashtags provided via command line.")
+        return [tag.lstrip("#").strip() for tag in args.tags if tag.strip()]
+
+    if args.input_file:
+        path = Path(args.input_file).expanduser()
+    else:
+        path = discover_default_input_file()
+        if path is None:
+            logger.error(
+                "No input source provided and default inputs.sample.txt was not found."
+            )
+            return []
+
+    if not path.exists():
+        logger.error("Input file %s does not exist.", path)
+        return []
+
+    logger.info("Loading hashtags from %s", path)
+    return load_hashtag_list(path)
+
+def orchestrate_scraping(args: argparse.Namespace) -> None:
+    settings_path = Path(args.config).expanduser()
+    settings = load_settings(settings_path)
+
+    hashtags = prepare_hashtags(args)
+    if not hashtags:
+        logger.error("No hashtags to process. Exiting.")
+        sys.exit(1)
+
+    base_url = settings.get("instagram_base_url", "https://www.instagram.com")
+    timeout = int(settings.get("request_timeout", 10))
+    max_retries = int(settings.get("max_retries", 3))
+    sleep_between_requests = float(settings.get("sleep_between_requests", 1.0))
+
+    parser = HashtagParser(
+        base_url=base_url,
+        timeout=timeout,
+        max_retries=max_retries,
+        sleep_between_requests=sleep_between_requests,
+        user_agent=settings.get(
+            "user_agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0 Safari/537.36",
+        ),
+    )
+    post_collector = PostCollector(parser=parser)
+    relations_mapper = RelationsMapper(parser=parser)
+
+    output_dir = resolve_output_dir(settings, args.output_dir)
+    exporter = DataExporter(output_dir=output_dir)
+
+    formats = [f.strip().lower() for f in args.formats.split(",") if f.strip()]
+    if not formats:
+        logger.warning("No valid output formats specified, defaulting to JSON.")
+        formats = ["json"]
+
+    all_results: List[Dict[str, Any]] = []
+
+    for idx, tag in enumerate(hashtags, start=1):
+        logger.info("Processing %s/%s hashtag: %s", idx, len(hashtags), tag)
+
+        stats: HashtagStats = parser.fetch_stats(tag)
+
+        relations = relations_mapper.map_relations(tag)
+        top_posts = post_collector.collect_top_posts(tag)
+
+        result: Dict[str, Any] = stats.to_dict()
+        result.update(relations)
+        result["topPosts"] = [p.to_dict() for p in top_posts]
+
+        all_results.append(result)
+
+    if not all_results:
+        logger.error("No results produced. Exiting without export.")
+        sys.exit(2)
+
+    exporter.export(all_results, formats)
+    logger.info("Completed successfully. Exported %s hashtag records.", len(all_results))
+    logger.info("Sample record:\n%s", json.dumps(all_results[0], indent=2))
+
+def main() -> None:
+    arg_parser = build_arg_parser()
+    args = arg_parser.parse_args()
+    orchestrate_scraping(args)
+
+if __name__ == "__main__":
+    main()
